@@ -1,0 +1,44 @@
+.container.mx-auto.px-4.py-8
+  .flex.justify-between.items-center.mb-6
+    .flex.items-center
+      = link_to report_configs_path, class: "text-gray-500 hover:text-gray-700 mr-4" do
+        %svg.h-6.w-6{viewBox: "0 0 20 20", fill: "currentColor"}
+          %path{fill_rule: "evenodd", d: "M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z", clip_rule: "evenodd"}
+      %h1.text-2xl.font-bold.text-gray-900 Generation History: #{@report_config.name}
+
+    = button_to generate_report_config_path(@report_config), method: :post, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", data: { controller: "confirmation", action: "click->confirmation#show", confirmation_title_value: "Generate Report", confirmation_message_value: "Are you sure you want to generate and send this report now?" } do
+      %svg.-ml-1.mr-2.h-5.w-5{viewBox: "0 0 20 20", fill: "currentColor"}
+        %path{fill_rule: "evenodd", d: "M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z", clip_rule: "evenodd"}
+      Generate Now
+
+  .bg-white.shadow.overflow-hidden.sm:rounded-md
+    %ul.divide-y.divide-gray-200
+      - @generations.each do |generation|
+        %li
+          .px-4.py-4.sm:px-6
+            .flex.items-center.justify-between
+              .flex.items-center
+                %span.inline-flex.items-center.px-2.5.py-0.5.rounded-full.text-xs.font-medium
+                  - case generation.status
+                  - when 'completed'
+                    %span.bg-green-100.text-green-800 Completed
+                  - when 'failed'
+                    %span.bg-red-100.text-red-800 Failed
+                  - when 'generating'
+                    %span.bg-yellow-100.text-yellow-800 Generating
+                  - else
+                    %span.bg-gray-100.text-gray-800 Pending
+                %span.ml-2.text-sm.text-gray-500
+                  = generation.generated_at&.strftime("%B %d, %Y at %I:%M %p")
+              .ml-2.flex-shrink-0.flex
+                - if generation.completed?
+                  = link_to "View", "#", class: "text-blue-600 hover:text-blue-900", data: { turbo_frame: "report-content-#{generation.id}" }
+            - if generation.failed?
+              .mt-2.text-sm.text-red-700
+                = generation.error_message
+            - if generation.completed?
+              = turbo_frame_tag "report-content-#{generation.id}" do
+                .mt-4.prose.max-w-none
+                  = simple_format generation.content
+
+= render "shared/confirmation_dialog", action: generate_report_config_path(@report_config), title: "Generate Report", message: "Are you sure you want to generate and send this report now?" 

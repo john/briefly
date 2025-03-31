@@ -1,0 +1,2 @@
+module ReportConfigsHelper
+end

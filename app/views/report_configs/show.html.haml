@@ -1,0 +1,76 @@
+.container.mx-auto.px-4.py-8
+  .max-w-4xl.mx-auto
+    .bg-white.shadow.rounded-lg.p-6
+      .flex.justify-between.items-start.mb-6
+        %h1.text-3xl.font-bold.text-gray-900= @report_config.name
+        .flex.space-x-3
+          - if @report_config.draft?
+            = button_to "Publish", publish_report_config_path(@report_config), method: :patch, class: "bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+          - else
+            = button_to "Unpublish", unpublish_report_config_path(@report_config), method: :patch, class: "bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700"
+          = button_to "Generate Report", generate_report_config_path(@report_config), method: :post, class: "bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          = link_to "Edit", edit_report_config_path(@report_config), class: "bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700"
+          = button_to "Delete", report_config_path(@report_config), method: :delete, class: "bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700", data: { confirm: "Are you sure you want to delete this report config?" }
+
+      .grid.grid-cols-2.gap-6.mb-6
+        .col-span-2
+          %h2.text-xl.font-semibold.text-gray-700.mb-2 Report Details
+          .bg-gray-50.p-4.rounded-md
+            %p.text-gray-600
+              %strong Status:
+              %span.ml-2= @report_config.status.titleize
+            %p.text-gray-600
+              %strong Frequency:
+              %span.ml-2= @report_config.frequency.titleize
+            %p.text-gray-600
+              %strong Recipients:
+              %span.ml-2= @report_config.recipients
+            %p.text-gray-600
+              %strong Model:
+              %span.ml-2= @report_config.model
+            %p.text-gray-600
+              %strong Temperature:
+              %span.ml-2= @report_config.temperature
+            %p.text-gray-600
+              %strong Last Sent:
+              %span.ml-2= @report_config.last_sent_at&.strftime("%B %d, %Y at %I:%M %p") || "Never"
+            %p.text-gray-600
+              %strong Next Scheduled:
+              %span.ml-2= @report_config.next_scheduled_at&.strftime("%B %d, %Y at %I:%M %p") || "Not scheduled"
+
+      .mb-6
+        %h2.text-xl.font-semibold.text-gray-700.mb-2 Prompt
+        .bg-gray-50.p-4.rounded-md
+          %p.text-gray-600.whitespace-pre-wrap= @report_config.prompt
+
+      .mb-6
+        %h2.text-xl.font-semibold.text-gray-700.mb-2 Recent Generations
+        .bg-gray-50.p-4.rounded-md
+          - if @report_config.report_generations.any?
+            .space-y-4
+              - @report_config.report_generations.recent.each do |generation|
+                .border-b.border-gray-200.pb-4.last:border-0
+                  .flex.justify-between.items-start
+                    .flex-1
+                      %p.text-gray-600
+                        %strong Status:
+                        %span.ml-2= generation.status.titleize
+                      %p.text-gray-600
+                        %strong Started:
+                        %span.ml-2= generation.started_at&.strftime("%B %d, %Y at %I:%M %p")
+                      %p.text-gray-600
+                        %strong Completed:
+                        %span.ml-2= generation.completed_at&.strftime("%B %d, %Y at %I:%M %p")
+                      - if generation.error_message.present?
+                        %p.text-red-600.mt-2
+                          %strong Error:
+                          %span.ml-2= generation.error_message
+                      - if generation.content.present?
+                        %p.text-gray-600.mt-2
+                          %strong Content:
+                          %span.ml-2= generation.content
+          - else
+            %p.text-gray-600 No report generations yet.
+
+      .mt-6
+        = link_to "Back to Reports", report_configs_path, class: "text-blue-600 hover:text-blue-800" 

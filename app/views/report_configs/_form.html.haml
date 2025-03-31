@@ -1,0 +1,71 @@
+= form_with(model: report_config, class: "space-y-6", data: { turbo: false }) do |f|
+  -# - if report_config.errors.any?
+  -#   .bg-red-50.p-4.rounded-md
+  -#     .flex
+  -#       .flex-shrink-0
+  -#         %svg.h-5.w-5.text-red-400{viewBox: "0 0 20 20", fill: "currentColor"}
+  -#           %path{fill_rule: "evenodd", d: "M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z", clip_rule: "evenodd"}
+  -#       .ml-3
+  -#         %h3.text-sm.font-medium.text-red-800
+  -#           = pluralize(report_config.errors.count, "error") prohibited this report configuration from being saved:
+  -#         .mt-2.text-sm.text-red-700
+  -#           %ul.list-disc.pl-5.space-y-1
+  -#             - report_config.errors.full_messages.each do |message|
+  -#               %li= message
+
+  .space-y-4
+    .grid.grid-cols-1.gap-4.sm:grid-cols-2
+      .col-span-1
+        -# = f.label :name, "Report Name", class: "block text-sm font-medium text-gray-700"
+        = f.label :name, "Report Name", class: "block font-medium text-gray-700"
+        = f.text_field :name, class: "mt-1 p-3 h-12 block w-full rounded-md border-gray-500 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+        -# %p.mt-1.text-sm.text-gray-500 A descriptive name for this report
+
+      .col-span-1
+        = f.label :frequency, "How often should it be sent?", class: "block text-sm font-medium text-gray-700"
+        -# = f.select :frequency, ReportConfig::FREQUENCIES.map { |f| [f.titleize, f] }, {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+        = f.select :frequency, ReportConfig.frequencies.keys.map { |f| [f.titleize, f] }, {}, class: "mt-1 p-3 h-12 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+
+        -# %p.mt-1.text-sm.text-gray-500 How often should this report be generated?
+
+    .grid.grid-cols-1.gap-4.sm:grid-cols-2
+      .col-span-1
+        = f.label :model, "Which AI model should be used?", class: "block text-sm font-medium text-gray-700"
+        = f.select :model, ReportConfig::AVAILABLE_MODELS.map { |m| [m.titleize, m] }, {}, class: "mt-1 p-3 h-12 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+        -# %p.mt-1.text-sm.text-gray-500 Which AI model should be used?
+
+      .col-span-1
+        = f.label :temperature, class: "block text-sm font-medium text-gray-700"
+        = f.number_field :temperature, step: 0.1, min: 0, max: 2, class: "mt-1 p-3 h-12 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+        %p.mt-1.text-sm.text-gray-500 Controls randomness (0.0 to 2.0)
+
+    .col-span-1.sm:col-span-2
+      = f.label :recipients, class: "block text-sm font-medium text-gray-700"
+      = f.text_field :recipients, class: "mt-1 p-3 h-12 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+      %p.mt-1.text-sm.text-gray-500 Comma-separated list of email addresses
+
+    .col-span-1.sm:col-span-2
+      = f.label :prompt, class: "block text-sm font-medium text-gray-700"
+      = f.text_area :prompt, rows: 4, class: "mt-1 p-3 h-50 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+      %p.mt-1.text-sm.text-gray-500 The prompt that will be used to generate the report
+
+  .flex.justify-end.space-x-3
+    = link_to "Cancel", report_configs_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+    - if report_config.persisted?
+      = link_to "Preview", preview_report_config_path(report_config), class: "inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500", data: { turbo: true, controller: "preview", action: "click->preview#startLoading" }
+      - if report_config.draft?
+        = button_to "Publish", publish_report_config_path(report_config), method: :post, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500", data: { controller: "confirmation", action: "click->confirmation#show", confirmation_title_value: "Publish Report", confirmation_message_value: "Are you sure you want to publish this report? It will start being sent according to the configured schedule." }
+      - elsif report_config.published?
+        = button_to "Republish", publish_report_config_path(report_config), method: :post, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500", data: { controller: "confirmation", action: "click->confirmation#show", confirmation_title_value: "Republish Report", confirmation_message_value: "Are you sure you want to republish this report? This will update the configuration for all future reports." }
+        = button_to "Unpublish", unpublish_report_config_path(report_config), method: :post, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500", data: { controller: "confirmation", action: "click->confirmation#show", confirmation_title_value: "Unpublish Report", confirmation_message_value: "Are you sure you want to unpublish this report? It will stop being sent until published again." }
+    = f.submit class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+
+#preview-content
+  - if report_config.persisted?
+    .preview-loading.hidden
+      .flex.items-center.justify-center.p-4
+        .animate-spin.rounded-full.h-8.w-8.border-b-2.border-blue-500
+
+- if report_config.persisted?
+  = render "shared/confirmation_dialog", action: publish_report_config_path(report_config), title: "Publish Report", message: "Are you sure you want to publish this report? It will start being sent according to the configured schedule."
+  = render "shared/confirmation_dialog", action: unpublish_report_config_path(report_config), title: "Unpublish Report", message: "Are you sure you want to unpublish this report? It will stop being sent until published again." 

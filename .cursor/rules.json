@@ -1,0 +1,54 @@
+{
+  "rules": [
+    {
+      "name": "Rails Model",
+      "pattern": "app/models/**/*.rb",
+      "context": "You are an expert Ruby on Rails developer. Follow these guidelines:\n- Use descriptive model names in singular form\n- Include validations and associations\n- Use scopes for common queries\n- Follow Ruby style guide\n- Use concerns for shared behavior\n- Implement callbacks judiciously"
+    },
+    {
+      "name": "Rails Controller",
+      "pattern": "app/controllers/**/*.rb",
+      "context": "You are an expert Ruby on Rails developer. Follow these guidelines:\n- Keep controllers thin, move logic to models or service objects\n- Use strong parameters\n- Follow RESTful conventions\n- Handle errors gracefully\n- Use before_action for shared logic\n- Return appropriate HTTP status codes"
+    },
+    {
+      "name": "Rails View",
+      "pattern": "app/views/**/*.{erb,haml}",
+      "context": "You are an expert Ruby on Rails developer. Follow these guidelines:\n- Keep views simple and focused\n- Use partials for reusable components\n- Follow Rails view helpers conventions\n- Use Tailwind CSS for styling\n- Keep logic out of views\n- Use content_for for layout blocks"
+    },
+    {
+      "name": "Rails Test",
+      "pattern": "spec/**/*.rb",
+      "context": "You are an expert Ruby on Rails developer. Follow these guidelines:\n- Write comprehensive tests using RSpec\n- Use descriptive test names\n- Follow the Arrange-Act-Assert pattern\n- Use factories (FactoryBot) for test data\n- Test edge cases and error conditions\n- Use shared examples for common test patterns"
+    },
+    {
+      "name": "Rails Config",
+      "pattern": "config/**/*.rb",
+      "context": "You are an expert Ruby on Rails developer. Follow these guidelines:\n- Keep configuration DRY\n- Use environment variables for sensitive data\n- Follow Rails configuration best practices\n- Document complex configurations\n- Use initializers for third-party gems"
+    },
+    {
+      "name": "Rails JavaScript",
+      "pattern": "app/javascript/**/*.{js,ts}",
+      "context": "You are an expert Ruby on Rails developer. Follow these guidelines:\n- Use Stimulus for JavaScript behavior\n- Follow Turbo conventions\n- Keep JavaScript modular and organized\n- Use ES6+ features appropriately\n- Document complex JavaScript logic\n- Follow Rails JavaScript conventions"
+    },
+    {
+      "name": "Rails Migration",
+      "pattern": "db/migrate/**/*.rb",
+      "context": "You are an expert Ruby on Rails developer. Follow these guidelines:\n- Write reversible migrations\n- Use appropriate data types\n- Add indexes for performance\n- Follow naming conventions\n- Include timestamps\n- Document complex migrations"
+    },
+    {
+      "name": "Rails Service",
+      "pattern": "app/services/**/*.rb",
+      "context": "You are an expert Ruby on Rails developer. Follow these guidelines:\n- Keep services focused and single-purpose\n- Use dependency injection\n- Handle errors appropriately\n- Document complex business logic\n- Follow Ruby style guide\n- Use service objects for complex operations"
+    },
+    {
+      "name": "Rails Job",
+      "pattern": "app/jobs/**/*.rb",
+      "context": "You are an expert Ruby on Rails developer. Follow these guidelines:\n- Use background jobs for long-running tasks\n- Implement retry mechanisms\n- Handle job failures gracefully\n- Use appropriate queue priorities\n- Document job requirements\n- Follow Active Job best practices"
+    },
+    {
+      "name": "Rails Mailer",
+      "pattern": "app/mailers/**/*.rb",
+      "context": "You are an expert Ruby on Rails developer. Follow these guidelines:\n- Keep mailers focused\n- Use mailer previews\n- Follow email best practices\n- Handle errors appropriately\n- Use appropriate email templates\n- Test mailer functionality"
+    }
+  ]
+} 
